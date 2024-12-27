@@ -1,67 +1,77 @@
-import {useEffect, useState} from 'react'
+import { useEffect, useState } from 'react'
 import { deleteCategory, getCategoryList, postCategory } from '../../service/api'
 
 
-const CreateCategory : React.FC = () =>{
-    const [categoruIdentifier,setCategoruIdentifier] = useState<string>('')
-    const [listCategory, setListCategory] = useState<{id: number; nome: string}[]>([])
-    
-    const categoryCreate = async () =>{
-    try{
-        const respondeseCategory = await postCategory(categoruIdentifier)
-        alert(`Categoria criada com sucesso: ${categoruIdentifier}`)
-        setCategoruIdentifier('')
-        await fetchCategory()
-    }catch(err){
-        console.error('Erro ao cadastrar a cateogoria.')
-    }
-    }
+const CreateCategory: React.FC = () => {
+    const [categoruIdentifier, setCategoruIdentifier] = useState<string>('')
+    const [listCategory, setListCategory] = useState<{ id: number; nome: string }[]>([])
+    const [error, setError] = useState<string | null>(null)
 
-    const fetchCategory = async () =>{
-        try{
-            const response  = await getCategoryList()
-       
-            setListCategory(response)
+    const categoryCreate = async () => {
+        if (!categoruIdentifier) {
+            setError('O nome da categoria é obrigatorio')
+            setTimeout(()=>setError(null),5000)
+            return
+        }
 
-        }catch(err){
-            console.error('Erro no listamentto das categorias')
+        try {
+            setError(null)
+            const respondeseCategory = await postCategory(categoruIdentifier)
+            alert(`Categoria criada com sucesso: ${categoruIdentifier}`)
+            setCategoruIdentifier('')
+            await fetchCategory()
+        } catch (err) {
+            setError('Erro ao cadastrar a cateogoria.')
         }
     }
 
-    const handleDelete = async(id:number) =>{
-        try{
+    const fetchCategory = async () => {
+        try {
+            const response = await getCategoryList()
+
+            setListCategory(response)
+
+        } catch (err) {
+            setError('Erro no listamentto das categorias')
+        }
+    }
+
+    const handleDelete = async (id: number) => {
+        try {
             await deleteCategory(id)
             alert('Categoria exclida com sucesso')
             await fetchCategory()
-        }catch(err){
-            alert(`Erro ao tentar excluir categoria.`)
+        } catch (err) {
+            setError(`Erro ao tentar excluir categoria.`)
         }
     }
- 
 
-    useEffect(()=>{
+
+    useEffect(() => {
         fetchCategory()
-    },[])
+    }, [])
 
-    return(
+    return (
         <div>
-            <input 
-            type="text"
-            value={categoruIdentifier}
-            onChange={(e)=>setCategoruIdentifier(e.target.value)}
-            placeholder='Digita o nome do caterogoria'
-             />
-             <button onClick={categoryCreate}>Adicionar categoria</button>
+            {error && <p className='text-red-600'>{error}</p>}
+
+            <input
+                type="text"
+                value={categoruIdentifier}
+                onChange={(e) => setCategoruIdentifier(e.target.value)}
+                placeholder='Digita o nome do caterogoria'
+            />
+            <button onClick={categoryCreate}>Adicionar categoria</button>
 
             <div>
-                {listCategory.map((category,index)=>{
-                    return(
+                {listCategory.map((category, index) => {
+                    return (
                         <li key={index} className='list-none'>
-                
-                           {category.id} -
-                           {category.nome}-
-                 
-                            <button onClick={()=>handleDelete(category.id)}>Excluir</button>
+
+                            {category.id} -
+                            {category.nome}-
+
+                            <button onClick={() => handleDelete(category.id)}>Excluir</button>
                         </li>
                     )
                 })}
