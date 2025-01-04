@@ -1,5 +1,14 @@
 import connectionMysql from "../db/db.js"; 
-
+(
+    async() =>{
+        try{
+            await connectionMysql()
+            console.log('Conectado com sucesso')
+        }catch(err){
+            console.error('Erro ao conectar com o banco de dados.',err.message)
+        }
+    }
+)();
 const postCreateCategory = async (nome) => {
     const connection = await connectionMysql()
     const [result] = await connection.execute('INSERT INTO categorias (nome) VALUES (?)', [nome])
