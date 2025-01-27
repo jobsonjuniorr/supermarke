@@ -10,9 +10,14 @@ import connectionMysql from "../db/db.js";
     }
 )();
 const postCreateCategory = async (nome) => {
-    const connection = await connectionMysql()
-    const [result] = await connection.execute('INSERT INTO categorias (nome) VALUES (?)', [nome])
-    return result
+    try {
+        const connection = await connectionMysql();
+        const [result] = await connection.execute('INSERT INTO categorias (nome) VALUES (?)', [nome]);
+        return result;
+    } catch (error) {
+        console.error('Erro ao inserir categoria no banco de dados:', error);
+        throw new Error('Erro ao inserir categoria');
+    }
 }
 
 const getCategory = async() =>{

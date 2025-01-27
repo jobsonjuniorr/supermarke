@@ -3,8 +3,11 @@ import Products from '../models/categorymodels.js'
 export const createCategory = async (req, res) => {
     try {
         const { nome } = req.body;
+        if(!nome || nome.trim() === ''){
+            return res.status(400).json({error:"Nome está vaziO:"})
+        }
         await Products.postCreateCategory(nome)
-        res.status(201).json({ message: 'Categoria Criada com sucesso!' })
+        res.status(201).json({ message: 'Categoria Criada com sucesso!'})
     } catch (error) {
         console.error('Erro ao cadastrar uma nova categoria', error);
         res.status(500).json({ error: 'Erro ao cadastrar categoria' });

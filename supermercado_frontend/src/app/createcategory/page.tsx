@@ -3,12 +3,12 @@ import { deleteCategory, getCategoryList, postCategory } from '../../service/api
 
 
 const CreateCategory: React.FC = () => {
-    const [categoruIdentifier, setCategoruIdentifier] = useState<string>('')
+    const [categoryIdentifier, setCategoruIdentifier] = useState<string>('')
     const [listCategory, setListCategory] = useState<{ id: number; nome: string }[]>([])
     const [error, setError] = useState<string | null>(null)
 
     const categoryCreate = async () => {
-        if (!categoruIdentifier) {
+        if (!categoryIdentifier) {
             setError('O nome da categoria é obrigatorio')
             setTimeout(()=>setError(null),5000)
             return
@@ -16,8 +16,9 @@ const CreateCategory: React.FC = () => {
 
         try {
             setError(null)
-            const respondeseCategory = await postCategory(categoruIdentifier)
-            alert(`Categoria criada com sucesso: ${categoruIdentifier}`)
+            const respondeseCategory = await postCategory(categoryIdentifier)
+            alert(`Categoria criada com sucesso: ${categoryIdentifier}`)
+
             setCategoruIdentifier('')
             await fetchCategory()
         } catch (err) {
@@ -57,7 +58,7 @@ const CreateCategory: React.FC = () => {
 
             <input
                 type="text"
-                value={categoruIdentifier}
+                value={categoryIdentifier}
                 onChange={(e) => setCategoruIdentifier(e.target.value)}
                 placeholder='Digita o nome do caterogoria'
             />
